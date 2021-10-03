@@ -22,14 +22,14 @@ app.use('/files', express.static(imgFolder));
 app.get('/ping', (req, res) => res.json({ ping: 'pong' }));
 
 // GET /list  - получить список изображений в формате json (должен содержать их id, размер, дата загрузки)
-app.get('/api/list', (req, res) => {
+app.get('/list', (req, res) => {
   const allImgs = db.find().map((img) => img.toPublicJSON());
 
   return res.json({allImgs});
 });
 
 // GET /image/:id  — скачать изображение с заданным id
-app.get('/api/image/:id', (req, res) => {
+app.get('/image/:id', (req, res) => {
   // TODO: наверное, правильно отправоять ид в базу, там отправлять в имг и возвращать стрим, который здесь пайпать
   let img = db.findOne(req.params.id).toPublicJSON();
   res.setHeader('Content-Type', img.mimeType);
@@ -39,7 +39,7 @@ app.get('/api/image/:id', (req, res) => {
 });
 
 // POST /upload  — загрузка изображения (сохраняет его на диск и возвращает идентификатор сохраненного изображения)
-app.post('/api/upload', upload.single('img'), async (req, res) => {
+app.post('/upload', upload.single('img'), async (req, res) => {
   const imgFile = new Img(req.file.filename, size = req.file.size, mimeType = req.file.mimetype);
 
   await db.insert(imgFile, req.file);
@@ -48,7 +48,7 @@ app.post('/api/upload', upload.single('img'), async (req, res) => {
 });
 
 // DELETE /image/:id  — удалить изображение
-app.delete('/api/image/:id', async (req, res) => {
+app.delete('/image/:id', async (req, res) => {
   const imgId = req.params.id;
 
   const id = await db.remove(imgId);
@@ -57,7 +57,7 @@ app.delete('/api/image/:id', async (req, res) => {
 });
 
 // GET /merge?front=<id>&back=<id>&color=145,54,32&threshold=5  — замена фона у изображения [200, 50, 52]
-app.get('/api/merge', (req, res) => {
+app.get('/merge', (req, res) => {
   const color = req.query.color.split(',').map(Number);
   // проверить размерность файлов
   const frontUrl = db.findOne(req.query.front).toPublicJSON().originalUrl;
@@ -86,6 +86,12 @@ app.get('/api/merge', (req, res) => {
   // const imgId = req.params.id;
 
   // return res.json(db.findOne(imgId).toPublicJSON());
+});
+
+app.get('/', (req, res) => {
+  res.status(400).send(new Error('no such api'));
+
+  return res;
 });
 
 app.listen(PORT, () => {
