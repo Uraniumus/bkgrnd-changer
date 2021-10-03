@@ -25,7 +25,7 @@ app.get('/ping', (req, res) => res.json({ ping: 'pong' }));
 app.get('/list', (req, res) => {
   const allImgs = db.find().map((img) => img.toPublicJSON());
 
-  return res.json({allImgs});
+  return res.json(allImgs);
 });
 
 // GET /image/:id  — скачать изображение с заданным id
