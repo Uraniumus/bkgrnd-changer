@@ -39,7 +39,7 @@ app.get('/image/:id', (req, res) => {
 });
 
 // POST /upload  — загрузка изображения (сохраняет его на диск и возвращает идентификатор сохраненного изображения)
-app.post('/upload', upload.single('img'), async (req, res) => {
+app.post('/upload', upload.single('image'), async (req, res) => {
   const imgFile = new Img(req.file.filename, size = req.file.size, mimeType = req.file.mimetype);
 
   await db.insert(imgFile, req.file);
