@@ -5,7 +5,7 @@ const { writeFile, removeFile } = require('../utils/fs');
 const { generateId } = require('../utils/generateId');
 
 module.exports = class Img {
-  constructor(id, createdAt) {
+  constructor(id, createdAt, size, mimeType) {
     // где interface File {
     //   id: string
     //   uploadedAt: number
@@ -15,8 +15,9 @@ module.exports = class Img {
     // }
     this.id = id || generateId();
     this.createdAt = createdAt || Date.now();
-
-    this.originalFilename = `${this.id}_original.img`;
+    this.size = size;
+    this.originalFilename = `${this.id}_original.jpeg`;
+    this.mimeType = mimeType;
   }
 
   async saveOriginal(content) {
@@ -30,8 +31,11 @@ module.exports = class Img {
   toPublicJSON() {
     return {
       id: this.id,
-      originalUrl: `/files/${this.id}_original.img`,
+      originalUrl: `/files/${this.id}_original.jpeg`,
       createdAt: this.createdAt,
+      size: this.size,
+      //this.originalFilename = `${this.id}_original.jpeg`;
+      mimeType: this.mimeType
     };
   }
 
@@ -39,6 +43,9 @@ module.exports = class Img {
     return {
       id: this.id,
       createdAt: this.createdAt,
+      size: this.size,
+      //this.originalFilename = `${this.id}_original.jpeg`;
+      mimeType: this.mimeType
     };
   }
 };

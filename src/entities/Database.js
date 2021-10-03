@@ -13,7 +13,6 @@ class Database extends EventEmitter {
   constructor() {
     super();
 
-    this.likedIds = {};
     this.idToImg = {};
   }
 
@@ -34,9 +33,9 @@ class Database extends EventEmitter {
       }
     }
 
-    if (typeof dump.likedIds === 'object') {
-      this.likedIds = { ...dump.likedIds };
-    }
+    // if (typeof dump.likedIds === 'object') {
+    //   this.likedIds = { ...dump.likedIds };
+    // }
   }
 
   // Добавление данных
@@ -68,7 +67,7 @@ class Database extends EventEmitter {
     await img.removeOriginal();
 
     delete this.idToImg[imgId];
-    delete this.likedIds[imgId];
+    //delete this.likedIds[imgId];
 
     this.emit('changed');
 
@@ -90,9 +89,9 @@ class Database extends EventEmitter {
 
 
   // Геттер всех картинок
-  find(isLiked = false) {
+  find() {
     let allImgs = Object.values(this.idToImg);
-
+    console.log(allImgs);
     // if (isLiked === true) {
     //   allImgs = allImgs.filter((img) => this.likedIds[img.id]);
     // }
@@ -104,8 +103,7 @@ class Database extends EventEmitter {
 
   toJSON() {
     return {
-      idToImg: this.idToImg//,
-     // likedIds: this.likedIds,
+      idToImg: this.idToImg 
     };
   }
 }
