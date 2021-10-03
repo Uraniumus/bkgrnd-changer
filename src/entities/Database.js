@@ -29,45 +29,31 @@ class Database extends EventEmitter {
       for (let id in dump.idToImg) {
         const img = dump.idToImg[id];
 
-        this.idToImg[id] = new Img(img.id, img.createdAt);
+        this.idToImg[id] = new Img(img.id, img.size, img.mimeType);
       }
     }
 
-    // if (typeof dump.likedIds === 'object') {
-    //   this.likedIds = { ...dump.likedIds };
-    // }
   }
 
   // Добавление данных
   async insert(img, originalContent) {
-    await img.saveOriginal(originalContent);
+    // todo: все-таки сохранять жэпеги
+    //await img.saveOriginal(originalContent);
 
     this.idToImg[img.id] = img;
 
     this.emit('changed');
   }
 
-  // Установление лайка
-  // setLiked(imgId, value) {
-  //   if (value === false) {
-  //     delete this.likedIds[imgId];
-  //   } else {
-  //     this.likedIds[imgId] = true;
-  //   }
-
-  //   this.emit('changed');
-  // }
-
   // Удаление
   async remove(imgId) {
     const imgRaw = this.idToImg[imgId];
 
-    const img = new Img(imgRaw.id, imgRaw.createdAt);
+    const img = new Img(imgRaw.id, imgRaw.size, imgRaw.mimeType)
 
     await img.removeOriginal();
 
     delete this.idToImg[imgId];
-    //delete this.likedIds[imgId];
 
     this.emit('changed');
 
@@ -77,12 +63,12 @@ class Database extends EventEmitter {
   // геттер на одно фото
   findOne(imgId) {
     const imgRaw = this.idToImg[imgId];
-
-    if (!imgRaw) {
+    console.log(imgRaw);
+    if (!imgRaw) { 
       return null;
     }
-
-    const img = new Img(imgRaw.id, imgRaw.createdAt);
+    // понять,  зачем обертка
+    const img = new Img(imgRaw.id, imgRaw.size, imgRaw.mimeType)
 
     return img;
   }
@@ -92,9 +78,6 @@ class Database extends EventEmitter {
   find() {
     let allImgs = Object.values(this.idToImg);
     console.log(allImgs);
-    // if (isLiked === true) {
-    //   allImgs = allImgs.filter((img) => this.likedIds[img.id]);
-    // }
 
     allImgs.sort((imgA, imgB) => imgB.createdAt - imgA.createdAt);
 

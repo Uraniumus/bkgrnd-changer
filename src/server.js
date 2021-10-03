@@ -5,6 +5,7 @@ const { PORT, imgFolder } = require('./config');
 const db = require('./entities/Database');
 const Img = require('./entities/Img');
 const multer  = require('multer');
+const fs = require('fs');
 var upload = multer({ dest: imgFolder });
 
 
@@ -19,38 +20,32 @@ app.get('/ping', (req, res) => res.json({ ping: 'pong' }));
 // GET /list  - получить список изображений в формате json (должен содержать их id, размер, дата загрузки)
 app.get('/api/list', (req, res) => {
   const allImgs = db.find().map((img) => img.toPublicJSON());
-  //const likedImgs = db.find(true).map((img) => img.toPublicJSON());
 
   return res.json({allImgs});
 });
 
 // GET /image/:id  — скачать изображение с заданным id
 app.get('/api/imgs/:id', (req, res) => {
-  const imgId = req.params.id;
-
-  return res.json(db.findOne(imgId).toPublicJSON());
+  // TODO: наверное, правильно отправоять ид в базу, там отправлять в имг и возвращать стрим, который здесь пайпать
+  let img = db.findOne(req.params.id).toPublicJSON();
+  console.log(img);
+  //res.set({'Content-Type': img.mimeType});
+  res.setHeader('Content-Type', img.mimeType);
+  const src = fs.createReadStream(img.originalUrl);
+  src.pipe(res);
+  return;
 });
 
 // POST /upload  — загрузка изображения (сохраняет его на диск и возвращает идентификатор сохраненного изображения)
 app.post('/api/upload', upload.single('img'), async (req, res) => {
-  //console.log('img '+JSON.stringify(req.file));// contains data about file fields
-  //console.log('body '+JSON.stringify(req.body));//contains data about non-file field
+  console.log(req.file.mimetype);
+  const imgFile = new Img(req.file.filename, size = req.file.size, mimeType = req.file.mimetype);
 
-  const imgFile = new Img('', '', size = req.file.size, mimeType = req.file.mimetype);
-  res.json({ img: req.file.buffer });
-  await db.insert(imgFile, req.file.buffer);
-  // Возвращать только id 
+  console.log(imgFile.toPublicJSON());
+  await db.insert(imgFile, req.file);
+
   return res.json(imgFile.toPublicJSON().id); 
 });
-
-// app.put('/api/imgs/:id', (req, res) => {
-//   const imgId = req.params.id;
-//   const isLiked = req.body.isLiked;
-
-//   db.setLiked(imgId, isLiked);
-
-//   return res.json({ isLiked });
-// });
 
 // DELETE /image/:id  — удалить изображение
 app.delete('/api/image/:id', async (req, res) => {
