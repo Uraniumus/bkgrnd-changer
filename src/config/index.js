@@ -5,7 +5,7 @@ const dbDumpFile = path.resolve(dbFolder, 'dump.json');
 const imgFolder = path.resolve(dbFolder, 'img');
 
 module.exports = {
-  PORT: 8085,
+  PORT: 8080,
 
   dbFolder,
   imgFolder,

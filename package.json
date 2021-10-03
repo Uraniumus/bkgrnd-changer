@@ -22,6 +22,7 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
+    "backrem": "^1.1.0",
     "express": "^4.17.1",
     "image-size": "^1.0.0",
     "multer": "^1.4.3",

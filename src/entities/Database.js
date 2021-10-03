@@ -63,7 +63,6 @@ class Database extends EventEmitter {
   // геттер на одно фото
   findOne(imgId) {
     const imgRaw = this.idToImg[imgId];
-    console.log(imgRaw);
     if (!imgRaw) { 
       return null;
     }
@@ -77,7 +76,6 @@ class Database extends EventEmitter {
   // Геттер всех картинок
   find() {
     let allImgs = Object.values(this.idToImg);
-    console.log(allImgs);
 
     allImgs.sort((imgA, imgB) => imgB.createdAt - imgA.createdAt);
 
