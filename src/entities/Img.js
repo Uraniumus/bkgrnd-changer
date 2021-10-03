@@ -7,36 +7,30 @@ const { writeFile, removeFile } = require('../utils/fs');
 
 module.exports = class Img {
   constructor(id, size, mimeType) {
-    // где interface File {
-    //   id: string
-    //   uploadedAt: number
-    //   size: number
-    //   body: Buffer
-    //   mimeType?: string
-    // }
+
     this.id = id ;
-    this.createdAt = '' || Date.now();
+    this.uploadedAt = '' || Date.now();
     this.size = size;
-    this.originalFilename =  id /*`${this.id}_original.jpeg`*/;
+    this.body =  id /*`${this.id}_original.jpeg`*/;
     this.mimeType = mimeType;
   }
 
   async saveOriginal(content) {
-    await writeFile(path.resolve(imgFolder, this.originalFilename), content);
-    await fs.rename(content.path, path.resolve(imgFolder, this.originalFilename));
+    await writeFile(path.resolve(imgFolder, this.body), content);
+    await fs.rename(content.path, path.resolve(imgFolder, this.body));
   }
 
   async removeOriginal() {
-    await removeFile(path.resolve(imgFolder, this.originalFilename));
+    await removeFile(path.resolve(imgFolder, this.body));
   }
 
   toPublicJSON() {
     return {
       id: this.id,
-      originalUrl: path.resolve(imgFolder, this.originalFilename),
-      createdAt: this.createdAt,
+      originalUrl: path.resolve(imgFolder, this.body),
+      uploadedAt: this.uploadedAt,
       size: this.size,
-      //originalFilename: this.id,
+      //body: this.id,
       mimeType: this.mimeType
     };
   }
@@ -44,9 +38,9 @@ module.exports = class Img {
   toJSON() {
     return {
       id: this.id,
-      createdAt: this.createdAt,
+      uploadedAt: this.uploadedAt,
       size: this.size,
-      //this.originalFilename = `${this.id}_original.jpeg`;
+      //this.body = `${this.id}_original.jpeg`;
       mimeType: this.mimeType
     };
   }

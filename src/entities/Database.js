@@ -43,6 +43,7 @@ class Database extends EventEmitter {
     this.idToImg[img.id] = img;
 
     this.emit('changed');
+    return img.id;
   }
 
   // Удаление

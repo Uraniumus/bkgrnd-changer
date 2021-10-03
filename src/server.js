@@ -24,7 +24,6 @@ app.get('/ping', (req, res) => res.json({ ping: 'pong' }));
 // GET /list  - получить список изображений в формате json (должен содержать их id, размер, дата загрузки)
 app.get('/list', (req, res) => {
   const allImgs = db.find().map((img) => img.toPublicJSON());
-
   return res.json(allImgs);
 });
 
@@ -42,9 +41,9 @@ app.get('/image/:id', (req, res) => {
 app.post('/upload', upload.single('image'), async (req, res) => {
   const imgFile = new Img(req.file.filename, size = req.file.size, mimeType = req.file.mimetype);
 
-  await db.insert(imgFile, req.file);
-
-  return res.json(imgFile.toPublicJSON().id); 
+  const id = await db.insert(imgFile, req.file);
+  //const id = imgFile.toPublicJSON().id;
+  return res.json({ id }); 
 });
 
 // DELETE /image/:id  — удалить изображение
